@@ -1,5 +1,6 @@
 package com.example.websitewallet.entity.Wallet;
 
+import com.example.websitewallet.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,4 +29,9 @@ public class Expense {
     @JoinColumn(name = "id_wallet")
     @JsonIgnore
     Wallet wallet;
+
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    @JsonIgnore
+    User user;
 }

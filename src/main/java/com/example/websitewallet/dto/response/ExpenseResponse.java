@@ -1,5 +1,6 @@
 package com.example.websitewallet.dto.response;
 
+import com.example.websitewallet.entity.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,4 +14,5 @@ public class ExpenseResponse {
     int amount;
     String description;
     Long id_wallet;
+    User user;
 }

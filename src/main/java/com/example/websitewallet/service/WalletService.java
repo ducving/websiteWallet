@@ -76,7 +76,7 @@ public class WalletService {
         return walletMapper.toWalletResponse(walletRepo.save(wallet));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     public WalletResponse updateWallet(Long id, WalletUpdateRequest request) {
         Wallet wallet = walletRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));

@@ -45,9 +45,7 @@ public class BudgetController {
     }
 
     @GetMapping
-    public ApiResponse<List<BudgetResponse>> getWallet() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        authentication.getAuthorities().forEach(grantedAuthority -> log.info("grantedAuthority : {}", grantedAuthority));
+    public ApiResponse<List<BudgetResponse>> getIncome() {
         return ApiResponse.<List<BudgetResponse>>builder()
                 .result(budgetService.budgetlist())
                 .build();
@@ -58,7 +56,7 @@ public class BudgetController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWallet(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteIncome(@PathVariable Long id) {
         budgetService.deleteBudget(id);
         return ResponseEntity.noContent().build();
     }

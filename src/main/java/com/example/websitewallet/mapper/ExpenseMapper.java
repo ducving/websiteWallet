@@ -3,7 +3,9 @@ package com.example.websitewallet.mapper;
 
 import com.example.websitewallet.dto.request.ExpenseCreateRequest;
 import com.example.websitewallet.dto.response.ExpenseResponse;
+import com.example.websitewallet.dto.response.IncomeResponse;
 import com.example.websitewallet.entity.Wallet.Expense;
+import com.example.websitewallet.entity.Wallet.Income;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

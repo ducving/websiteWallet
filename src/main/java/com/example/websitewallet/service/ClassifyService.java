@@ -1,8 +1,12 @@
 package com.example.websitewallet.service;
 
+import com.example.websitewallet.dto.request.BudgetCreateRequest;
+import com.example.websitewallet.dto.request.BudgetUpdateRequest;
 import com.example.websitewallet.dto.request.ClassifyCreateRequest;
 import com.example.websitewallet.dto.request.ClassifyUpdateRequest;
+import com.example.websitewallet.dto.response.BudgetResponse;
 import com.example.websitewallet.dto.response.ClassifyResponse;
+import com.example.websitewallet.entity.Budget;
 import com.example.websitewallet.entity.Classify;
 import com.example.websitewallet.entity.User;
 import com.example.websitewallet.entity.Wallet.IconWallet;
@@ -15,10 +19,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -39,46 +46,44 @@ public class ClassifyService {
 
     @Autowired
     private BudgetService budgetService;
-  
-    public ClassifyResponse addClassify(ClassifyCreateRequest request) {
+
+    public ClassifyResponse addClassify(ClassifyCreateRequest request){
         Classify classify=classifyMapper.toClassify(request);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        IconWallet iconWallet = iconWalletRepo.findById(request.getIconId())
-                .orElseThrow(() -> new RuntimeException("Icon not found"));
-        classify.setIconWallet(iconWallet);
         classify.setUser(user);
         return classifyMapper.toClassifyResponse(classifyRepository.save(classify));
     }
 
-    public ClassifyResponse updateClassify(Long idClassify,ClassifyUpdateRequest request){
-        Classify classify= classifyRepository.findById(idClassify)
+    public ClassifyResponse updateClassify(Long id, ClassifyUpdateRequest request){
+        Classify classify= classifyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         classifyMapper.updateClassy(classify,request);
-        IconWallet iconWallet = iconWalletRepo.findById(request.getIconId())
-                .orElseThrow(() -> new RuntimeException("Icon not found"));
-        classify.setIconWallet(iconWallet);
         return classifyMapper.toClassifyResponse(classifyRepository.save(classify));
     }
 
+    public List<ClassifyResponse> classifytlist(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+        List<Classify> classifies = classifyRepository.findAllByUserEmail(currentUserEmail);
+        return classifies.stream()
+                .map(classifyMapper::toClassifyResponse)
+                .collect(Collectors.toList());
+    }
 
-    @Transactional
-    public void deleteClassify(Long id) {
-        Classify classify = classifyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Classify not found"));
-        budgetService.deleteAllBudgetsByClassifyId(id);
-        budgetService.deleteAllBudgetsByClassifyId(id);
-        // Xóa classify khỏi cơ sở dữ liệu
-        classifyRepository.deleteById(id);
+    @PostAuthorize("returnObject.user.email == authentication.name")
+    public ClassifyResponse getClassify(Long id) {
+        Classify classify = classifyRepository.findClassifyById(id)
+                .orElseThrow(() -> new RuntimeException("Budget not found or you are not the owner"));
+        return classifyMapper.toClassifyResponse(classify);
     }
 
 
-    public List<Classify> getClassify() {
-        return classifyRepository.findAll();
+    @PreAuthorize("@budgetRepo.existsByIdAndUserEmail(#id, authentication.name)")
+    public void deleteClassify(Long id){
+        budgetRepo.deleteById(id);
     }
-
-
 
 }

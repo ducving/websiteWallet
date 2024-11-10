@@ -1,5 +1,6 @@
 package com.example.websitewallet.dto.request;
 
+import com.example.websitewallet.entity.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,4 +13,5 @@ public class IncomeCreateRequest {
     int amount;
     String description;
     Long id_wallet;
+    User user;
 }

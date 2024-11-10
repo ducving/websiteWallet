@@ -3,6 +3,7 @@ package com.example.websitewallet.controller;
 import com.example.websitewallet.dto.request.ClassifyCreateRequest;
 import com.example.websitewallet.dto.request.ClassifyUpdateRequest;
 import com.example.websitewallet.dto.response.ApiResponse;
+import com.example.websitewallet.dto.response.BudgetResponse;
 import com.example.websitewallet.dto.response.ClassifyResponse;
 import com.example.websitewallet.dto.response.WalletResponse;
 import com.example.websitewallet.entity.Classify;
@@ -28,7 +29,7 @@ public class ClassifyController {
 
 
     @PostMapping
-    ApiResponse<ClassifyResponse> add(@RequestBody ClassifyCreateRequest request) {
+    ApiResponse<ClassifyResponse> add(@ModelAttribute ClassifyCreateRequest request) {
         return ApiResponse.<ClassifyResponse>builder()
                 .result(classifyService.addClassify(request))
                 .build();
@@ -42,14 +43,19 @@ public class ClassifyController {
     }
 
     @GetMapping
-    public ApiResponse<List<Classify>> getWallet() {
-        return ApiResponse.<List<Classify>>builder()
-                .result(classifyService.getClassify())
+    public ApiResponse<List<ClassifyResponse>> getClassify() {
+        return ApiResponse.<List<ClassifyResponse>>builder()
+                .result(classifyService.classifytlist())
                 .build();
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWallet(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteClassify(@PathVariable Long id) {
         classifyService.deleteClassify(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ClassifyResponse getBudget(@PathVariable("id") Long id) {
+        return classifyService.getClassify(id);
     }
 }

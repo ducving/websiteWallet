@@ -68,9 +68,7 @@ public class BudgetService {
         budgetRepo.deleteById(id);
     }
 
-    public void deleteAllBudgetsByClassifyId(Long classifyId) {
-        budgetRepo.deleteAllByClassifyId(classifyId);
-    }
+
 
 
 }

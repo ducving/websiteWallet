@@ -1,20 +1,18 @@
 package com.example.websitewallet.controller;
 
 
-import com.example.websitewallet.dto.request.ExpenseCreateRequest;
-import com.example.websitewallet.dto.request.IncomeCreateRequest;
-import com.example.websitewallet.dto.response.ApiResponse;
-import com.example.websitewallet.dto.response.ExpenseResponse;
-import com.example.websitewallet.dto.response.IncomeResponse;
+import com.example.websitewallet.dto.request.*;
+import com.example.websitewallet.dto.response.*;
 import com.example.websitewallet.service.TransactionService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/transaction")
@@ -31,7 +29,20 @@ public class TransactionController {
                 .result(transactionService.createIncome(request))
                 .build();
     }
-
+    @GetMapping("/income")
+    public ApiResponse<List<IncomeResponse>> getIncome() {
+        return ApiResponse.<List<IncomeResponse>>builder()
+                .result(transactionService.Incomelist())
+                .build();
+    }
+    @PutMapping("/income/{id}")
+    public ApiResponse<IncomeResponse> updateIncome(@RequestBody IncomeUpdateRequest request, @PathVariable Long id) {
+        IncomeResponse incomeResponse = transactionService.updateIncome(id, request);
+        return ApiResponse.<IncomeResponse>builder()
+                .result(incomeResponse)
+                .build();
+    }
+//expense
     @PostMapping("/expense")
     ApiResponse<ExpenseResponse> createExpense(@RequestBody ExpenseCreateRequest request)  {
         return ApiResponse.<ExpenseResponse>builder()
@@ -39,4 +50,18 @@ public class TransactionController {
                 .build();
     }
 
+    @PutMapping("/expense/{id}")
+    public ApiResponse<ExpenseResponse> updateIncome(@RequestBody ExpenseUpdateRequest request, @PathVariable Long id) {
+        ExpenseResponse expenseResponse = transactionService.updateExpense(id,request);
+        return ApiResponse.<ExpenseResponse>builder()
+                .result(expenseResponse)
+                .build();
+    }
+
+    @GetMapping("/expense")
+    public ApiResponse<List<ExpenseResponse>> getExpense() {
+        return ApiResponse.<List<ExpenseResponse>>builder()
+                .result(transactionService.findAll())
+                .build();
+    }
 }

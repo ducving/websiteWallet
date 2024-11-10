@@ -53,7 +53,9 @@ public class SecurityConfig {
                 })
                 .authorizeHttpRequests(requests ->
                         requests.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
-                                .requestMatchers(HttpMethod.PUT,"/wallet/**").hasAuthority("OWNER")
+                                .requestMatchers(HttpMethod.PUT,PUBLIC_ENDPOINTS).hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.GET,PUBLIC_ENDPOINTS).hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE,PUBLIC_ENDPOINTS).hasAuthority("ADMIN")
                                 .anyRequest().authenticated());
         httpSecurity.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         httpSecurity.oauth2ResourceServer(oauth2ResourceServer ->
